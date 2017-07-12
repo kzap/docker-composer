@@ -1,14 +1,12 @@
 FROM composer:latest
 MAINTAINER Andre Marcelo-Tanner <andre@enthropia.com>
 
-# Install specific packages
-RUN echo '@testing http://nl.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories; \
-	echo '@community http://nl.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories; \
-    apk add --update \
-		libbz2 \
-		php7-bz2@community \
-	; \
-	cp /usr/lib/php7/modules/bz2.so /usr/local/lib/php/extensions/no-debug-non-zts-20160303/; \
-	cp /etc/php7/conf.d/00_bz2.ini ${PHP_INI_DIR}/conf.d/
+# Install PHP Extension: bz2
+RUN apk add --update \
+		bzip2-dev \
+    && docker-php-ext-install bz2 \
+    && apk del \
+    	bzip2-dev \
+    && rm -rf /tmp/* /var/cache/apk/*
 
 CMD ["install", "--ignore-platform-reqs"]
